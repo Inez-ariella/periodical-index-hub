@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Article, getPublicationTypeLabel } from '@/lib/data';
+import { Article } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
 
 interface ArticleDetailModalProps {
@@ -61,7 +61,7 @@ const ArticleDetailModal = ({ article, isOpen, onClose, onFindSimilar }: Article
           <div className="flex items-center justify-between mb-4">
             <Badge variant="koran" className="flex items-center gap-1.5">
               <Newspaper className="w-3.5 h-3.5" />
-              {getPublicationTypeLabel(article.jenisTerbitan)}
+              Surat Kabar
             </Badge>
           </div>
 

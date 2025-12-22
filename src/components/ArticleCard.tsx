@@ -3,7 +3,7 @@ import { Newspaper, Calendar, MapPin, Eye, ImageIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Article, getPublicationTypeLabel } from '@/lib/data';
+import { Article } from '@/lib/data';
 
 interface ArticleCardProps {
   article: Article;
@@ -61,7 +61,7 @@ const ArticleCard = ({ article, onViewDetail, searchQuery = '', index }: Article
             <div className="absolute top-3 left-3">
               <Badge variant="koran" className="flex items-center gap-1.5 shadow-md">
                 <Newspaper className="w-3 h-3" />
-                {getPublicationTypeLabel(article.jenisTerbitan)}
+                Surat Kabar
               </Badge>
             </div>
           </div>
