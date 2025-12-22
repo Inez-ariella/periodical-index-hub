@@ -17,20 +17,20 @@ const HeroSection = ({ onSearchClick }: HeroSectionProps) => {
     },
     { 
       icon: Newspaper, 
-      value: statistics.totalMedia.toString(), 
-      label: 'Media Berkala',
+      value: statistics.sources.toString(), 
+      label: 'Sumber Media',
       delay: 0.2 
     },
     { 
       icon: BookOpen, 
-      value: `${statistics.yearRange.start}-${statistics.yearRange.end}`, 
+      value: '2025', 
       label: 'Rentang Tahun',
       delay: 0.3 
     },
   ];
 
   const publicationStats = [
-    { icon: Newspaper, count: statistics.categories.koran, label: 'Surat Kabar', color: 'text-orange-400' },
+    { icon: Newspaper, count: statistics.newspapers, label: 'Surat Kabar', color: 'text-orange-400' },
   ];
 
   return (
