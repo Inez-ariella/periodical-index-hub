@@ -31,9 +31,6 @@ const HeroSection = ({ onSearchClick }: HeroSectionProps) => {
 
   const publicationStats = [
     { icon: Newspaper, count: statistics.categories.koran, label: 'Surat Kabar', color: 'text-orange-400' },
-    { icon: BookOpen, count: statistics.categories.jurnal, label: 'Jurnal', color: 'text-blue-400' },
-    { icon: ScrollText, count: statistics.categories.majalah, label: 'Majalah', color: 'text-purple-400' },
-    { icon: FileText, count: statistics.categories.buletin, label: 'Buletin', color: 'text-emerald-400' },
   ];
 
   return (
@@ -74,7 +71,7 @@ const HeroSection = ({ onSearchClick }: HeroSectionProps) => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
           >
-            Indeks Terbitan Berkala
+            Indeks Surat Kabar
             <span className="block mt-2 text-amber-400">
               Menelusuri Isu, Gagasan, dan Pengetahuan
             </span>
@@ -86,8 +83,8 @@ const HeroSection = ({ onSearchClick }: HeroSectionProps) => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-10 font-body"
           >
-            Sistem pencarian artikel dari surat kabar, jurnal, majalah, dan buletin. 
-            Temukan informasi relevan dari koleksi terbitan berkala perpustakaan dengan cepat dan terstruktur.
+            Sistem pencarian artikel dari berbagai surat kabar nasional dan lokal. 
+            Temukan informasi relevan dari koleksi kliping koran perpustakaan dengan cepat dan terstruktur.
           </motion.p>
 
           {/* CTA Buttons */}

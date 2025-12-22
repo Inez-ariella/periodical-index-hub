@@ -1,14 +1,13 @@
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, Newspaper, BookOpen, ScrollText, FileText, Calendar, 
-  MapPin, Tag, Hash, Bookmark, Search, Copy, CheckCircle2
+  Newspaper, Calendar, 
+  MapPin, Tag, Hash, Bookmark, Search, Copy, CheckCircle2, ImageIcon
 } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Article, JenisTerbitan, getPublicationTypeLabel } from '@/lib/data';
+import { Article, getPublicationTypeLabel } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
 
 interface ArticleDetailModalProps {
@@ -18,23 +17,11 @@ interface ArticleDetailModalProps {
   onFindSimilar: (article: Article) => void;
 }
 
-const getPublicationIcon = (type: JenisTerbitan) => {
-  const icons: Record<JenisTerbitan, any> = {
-    koran: Newspaper,
-    jurnal: BookOpen,
-    majalah: ScrollText,
-    buletin: FileText,
-  };
-  return icons[type];
-};
-
 const ArticleDetailModal = ({ article, isOpen, onClose, onFindSimilar }: ArticleDetailModalProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const [copied, setCopied] = useState(false);
 
   if (!article) return null;
-
-  const Icon = getPublicationIcon(article.jenisTerbitan);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('id-ID', {
@@ -72,8 +59,8 @@ const ArticleDetailModal = ({ article, isOpen, onClose, onFindSimilar }: Article
         <DialogHeader>
           {/* Type Badge */}
           <div className="flex items-center justify-between mb-4">
-            <Badge variant={article.jenisTerbitan} className="flex items-center gap-1.5">
-              <Icon className="w-3.5 h-3.5" />
+            <Badge variant="koran" className="flex items-center gap-1.5">
+              <Newspaper className="w-3.5 h-3.5" />
               {getPublicationTypeLabel(article.jenisTerbitan)}
             </Badge>
           </div>
@@ -91,11 +78,27 @@ const ArticleDetailModal = ({ article, isOpen, onClose, onFindSimilar }: Article
 
         {/* Content */}
         <div className="space-y-6 mt-4">
+          {/* Newspaper Photo */}
+          <div className="relative w-full h-64 bg-secondary/30 rounded-lg overflow-hidden">
+            {article.fotoUrl ? (
+              <img 
+                src={article.fotoUrl} 
+                alt={`Foto kliping: ${article.judul}`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/50">
+                <ImageIcon className="w-16 h-16 mb-2" />
+                <span className="text-sm">Foto Kliping Tidak Tersedia</span>
+              </div>
+            )}
+          </div>
+
           {/* Abstract */}
           <div>
             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-accent" />
-              Abstrak / Ringkasan
+              <Newspaper className="w-4 h-4 text-accent" />
+              Ringkasan Artikel
             </h4>
             <p className="text-muted-foreground leading-relaxed bg-secondary/30 p-4 rounded-lg">
               {article.abstrak}
@@ -123,25 +126,11 @@ const ArticleDetailModal = ({ article, isOpen, onClose, onFindSimilar }: Article
                   <p className="font-medium">{formatDate(article.tanggalTerbit)}</p>
                 </div>
               </div>
-
-              {(article.volume || article.nomor) && (
-                <div className="flex items-start gap-3">
-                  <Hash className="w-4 h-4 text-muted-foreground mt-1" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Volume / Nomor</p>
-                    <p className="font-medium">
-                      {article.volume && `Vol. ${article.volume}`}
-                      {article.volume && article.nomor && ', '}
-                      {article.nomor && `No. ${article.nomor}`}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <FileText className="w-4 h-4 text-muted-foreground mt-1" />
+                <Hash className="w-4 h-4 text-muted-foreground mt-1" />
                 <div>
                   <p className="text-xs text-muted-foreground">Halaman / Kolom</p>
                   <p className="font-medium">{article.halamanKolom}</p>
@@ -155,16 +144,6 @@ const ArticleDetailModal = ({ article, isOpen, onClose, onFindSimilar }: Article
                   <p className="font-medium">{article.lokasiKoleksi}</p>
                 </div>
               </div>
-
-              {article.issn && (
-                <div className="flex items-start gap-3">
-                  <Hash className="w-4 h-4 text-muted-foreground mt-1" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">ISSN</p>
-                    <p className="font-medium font-mono">{article.issn}</p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 

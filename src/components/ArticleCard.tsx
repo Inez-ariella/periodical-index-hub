@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
-import { Newspaper, BookOpen, ScrollText, FileText, Calendar, MapPin, Eye } from 'lucide-react';
+import { Newspaper, Calendar, MapPin, Eye, ImageIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Article, JenisTerbitan, getPublicationTypeLabel } from '@/lib/data';
+import { Article, getPublicationTypeLabel } from '@/lib/data';
 
 interface ArticleCardProps {
   article: Article;
@@ -11,16 +11,6 @@ interface ArticleCardProps {
   searchQuery?: string;
   index: number;
 }
-
-const getPublicationIcon = (type: JenisTerbitan) => {
-  const icons: Record<JenisTerbitan, any> = {
-    koran: Newspaper,
-    jurnal: BookOpen,
-    majalah: ScrollText,
-    buletin: FileText,
-  };
-  return icons[type];
-};
 
 const highlightText = (text: string, query: string) => {
   if (!query.trim()) return text;
@@ -34,8 +24,6 @@ const highlightText = (text: string, query: string) => {
 };
 
 const ArticleCard = ({ article, onViewDetail, searchQuery = '', index }: ArticleCardProps) => {
-  const Icon = getPublicationIcon(article.jenisTerbitan);
-  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('id-ID', {
       day: 'numeric',
@@ -53,20 +41,35 @@ const ArticleCard = ({ article, onViewDetail, searchQuery = '', index }: Article
       <Card className="group h-full hover:shadow-card-hover transition-all duration-300 border-border/50 hover:border-accent/30 overflow-hidden">
         <CardContent className="p-0">
           {/* Type Indicator Bar */}
-          <div className={`h-1 ${
-            article.jenisTerbitan === 'koran' ? 'bg-orange-500' :
-            article.jenisTerbitan === 'jurnal' ? 'bg-blue-500' :
-            article.jenisTerbitan === 'majalah' ? 'bg-purple-500' :
-            'bg-emerald-500'
-          }`} />
+          <div className="h-1 bg-orange-500" />
+          
+          {/* Newspaper Photo */}
+          <div className="relative w-full h-48 bg-secondary/30 overflow-hidden">
+            {article.fotoUrl ? (
+              <img 
+                src={article.fotoUrl} 
+                alt={`Foto kliping: ${article.judul}`}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/50">
+                <ImageIcon className="w-12 h-12 mb-2" />
+                <span className="text-xs">Foto Kliping</span>
+              </div>
+            )}
+            {/* Media Badge Overlay */}
+            <div className="absolute top-3 left-3">
+              <Badge variant="koran" className="flex items-center gap-1.5 shadow-md">
+                <Newspaper className="w-3 h-3" />
+                {getPublicationTypeLabel(article.jenisTerbitan)}
+              </Badge>
+            </div>
+          </div>
           
           <div className="p-5">
             {/* Header */}
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <Badge variant={article.jenisTerbitan} className="flex items-center gap-1.5">
-                <Icon className="w-3 h-3" />
-                {getPublicationTypeLabel(article.jenisTerbitan)}
-              </Badge>
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <span className="text-sm font-medium text-foreground">{article.namaMedia}</span>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Calendar className="w-3 h-3" />
                 {formatDate(article.tanggalTerbit)}
@@ -82,16 +85,6 @@ const ArticleCard = ({ article, onViewDetail, searchQuery = '', index }: Article
             <p className="text-sm text-muted-foreground mb-3">
               {highlightText(article.pengarang, searchQuery)}
             </p>
-
-            {/* Media Info */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-              <span className="font-medium text-foreground">{article.namaMedia}</span>
-              {article.volume && (
-                <span className="text-muted-foreground/60">
-                  Vol. {article.volume}{article.nomor && `, No. ${article.nomor}`}
-                </span>
-              )}
-            </div>
 
             {/* Subjects */}
             <div className="flex flex-wrap gap-1.5 mb-4">
