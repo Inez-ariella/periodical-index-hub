@@ -7,6 +7,7 @@ import SearchFilters from '@/components/SearchFilters';
 import ArticleCard from '@/components/ArticleCard';
 import ArticleDetailModal from '@/components/ArticleDetailModal';
 import ThematicExploration from '@/components/ThematicExploration';
+import NewspaperShelf from '@/components/NewspaperShelf';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { sampleArticles, Article } from '@/lib/data';
@@ -179,6 +180,9 @@ const Index = () => {
             )}
           </div>
         </section>
+
+        {/* Newspaper Shelf - Digital Collection */}
+        <NewspaperShelf onArticleClick={handleViewDetail} />
 
         {/* Thematic Exploration */}
         <ThematicExploration

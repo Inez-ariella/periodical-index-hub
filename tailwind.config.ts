@@ -83,6 +83,15 @@ export default {
           majalah: "hsl(var(--majalah))",
           buletin: "hsl(var(--buletin))",
         },
+        shelf: {
+          DEFAULT: "hsl(var(--shelf-bg))",
+          wood: "hsl(var(--shelf-wood))",
+          plank: "hsl(var(--shelf-plank))",
+          bracket: "hsl(var(--shelf-bracket))",
+          foreground: "hsl(var(--shelf-foreground))",
+          muted: "hsl(var(--shelf-muted))",
+          border: "hsl(var(--shelf-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
