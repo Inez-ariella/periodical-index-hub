@@ -141,19 +141,121 @@ const FlipbookViewer = ({
 
   if (!isOpen) return null;
 
+  // Generate dummy newspaper page content
+  const generateDummyPageContent = (pageNum: number, title: string, mediaName: string) => {
+    const headlines = [
+      "BERITA UTAMA HARI INI",
+      "LAPORAN KHUSUS",
+      "EKONOMI & BISNIS",
+      "POLITIK NASIONAL",
+      "DUNIA PENDIDIKAN",
+      "GAYA HIDUP"
+    ];
+    const headline = headlines[pageNum % headlines.length];
+    
+    return (
+      <div className="w-full h-full bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 flex flex-col">
+        {/* Newspaper Header */}
+        <div className="border-b-4 border-double border-gray-800 pb-2 mb-3">
+          <div className="flex justify-between items-center text-[8px] text-gray-600 mb-1">
+            <span>Edisi Digital</span>
+            <span>Hal. {pageNum + 1}</span>
+          </div>
+          <h1 className="font-serif text-lg md:text-xl font-black text-gray-900 text-center tracking-tight">
+            {mediaName}
+          </h1>
+          <div className="flex justify-center gap-4 text-[7px] text-gray-500 mt-1">
+            <span>Senin, 5 Januari 2026</span>
+            <span>•</span>
+            <span>www.{mediaName.toLowerCase().replace(/\s/g, '')}.co.id</span>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col gap-2">
+          {/* Headline */}
+          <div className="bg-gray-900 text-white px-2 py-1 text-[8px] font-bold w-fit">
+            {headline}
+          </div>
+          
+          {/* Article Title */}
+          <h2 className="font-serif text-sm md:text-base font-bold text-gray-900 leading-tight">
+            {title}
+          </h2>
+
+          {/* Columns Layout */}
+          <div className="flex-1 grid grid-cols-2 gap-2 mt-2">
+            <div className="space-y-1">
+              {[...Array(12)].map((_, i) => (
+                <div 
+                  key={i} 
+                  className="h-1.5 bg-gray-300 rounded-sm"
+                  style={{ width: `${70 + Math.random() * 30}%` }}
+                />
+              ))}
+            </div>
+            <div className="space-y-1">
+              {/* Placeholder image */}
+              <div className="w-full aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded mb-2 flex items-center justify-center">
+                <FileText className="w-8 h-8 text-gray-400" />
+              </div>
+              {[...Array(6)].map((_, i) => (
+                <div 
+                  key={i} 
+                  className="h-1.5 bg-gray-300 rounded-sm"
+                  style={{ width: `${60 + Math.random() * 40}%` }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom section */}
+          <div className="border-t border-gray-300 pt-2 mt-auto">
+            <div className="grid grid-cols-3 gap-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="space-y-1">
+                  <div className="h-1.5 bg-gray-400 rounded-sm w-3/4" />
+                  {[...Array(3)].map((_, j) => (
+                    <div 
+                      key={j} 
+                      className="h-1 bg-gray-200 rounded-sm"
+                      style={{ width: `${80 + Math.random() * 20}%` }}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col"
+        className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col"
       >
+        {/* Close Button - Always Visible */}
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2, type: 'spring' }}
+          onClick={onClose}
+          className="fixed top-4 right-4 z-[60] w-14 h-14 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-2xl flex items-center justify-center transition-all hover:scale-110 group"
+          aria-label="Tutup Koran Digital"
+        >
+          <X className="w-7 h-7 group-hover:rotate-90 transition-transform duration-300" />
+        </motion.button>
+
         {/* Header */}
         <motion.header
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex items-center justify-between px-4 md:px-8 py-4 bg-gradient-to-b from-black/50 to-transparent"
+          className="flex items-center justify-between px-4 md:px-8 py-4 bg-gradient-to-b from-black/70 to-transparent"
         >
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
@@ -169,7 +271,7 @@ const FlipbookViewer = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mr-16">
             {/* Zoom Controls */}
             <div className="hidden md:flex items-center gap-1 bg-white/10 rounded-full px-2 py-1">
               <Button
@@ -224,16 +326,6 @@ const FlipbookViewer = ({
                 <Maximize2 className="w-5 h-5" />
               )}
             </Button>
-
-            {/* Close */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="h-10 w-10 text-white hover:bg-white/20"
-            >
-              <X className="w-5 h-5" />
-            </Button>
           </div>
         </motion.header>
 
@@ -274,25 +366,23 @@ const FlipbookViewer = ({
               <div className="relative flex">
                 {/* Left Page (Previous) */}
                 <motion.div
-                  className="hidden md:block w-[280px] lg:w-[350px] xl:w-[400px] h-[400px] lg:h-[500px] xl:h-[560px] bg-gradient-to-l from-gray-100 to-gray-200 rounded-l-sm shadow-2xl relative overflow-hidden"
+                  className="hidden md:block w-[280px] lg:w-[350px] xl:w-[400px] h-[400px] lg:h-[500px] xl:h-[560px] rounded-l-sm shadow-2xl relative overflow-hidden"
                   style={{ transformStyle: 'preserve-3d' }}
                 >
-                  {currentPage > 0 && sortedArticles[currentPage - 1] && (
-                    <>
-                      {sortedArticles[currentPage - 1].fotoUrl ? (
-                        <img
-                          src={sortedArticles[currentPage - 1].fotoUrl}
-                          alt="Previous page"
-                          className="w-full h-full object-cover object-center opacity-60"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-100" />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
-                    </>
-                  )}
-                  {currentPage === 0 && (
-                    <div className="w-full h-full bg-gradient-to-r from-amber-50 to-amber-100 flex items-center justify-center">
+                  {currentPage > 0 && sortedArticles[currentPage - 1] ? (
+                    sortedArticles[currentPage - 1].fotoUrl ? (
+                      <img
+                        src={sortedArticles[currentPage - 1].fotoUrl}
+                        alt="Previous page"
+                        className="w-full h-full object-cover object-center opacity-60"
+                      />
+                    ) : (
+                      <div className="w-full h-full opacity-60">
+                        {generateDummyPageContent(currentPage - 1, sortedArticles[currentPage - 1].judul, mediaName)}
+                      </div>
+                    )
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-r from-amber-100 to-amber-50 flex items-center justify-center">
                       <div className="text-center p-8">
                         <BookOpen className="w-16 h-16 text-amber-700/50 mx-auto mb-4" />
                         <h3 className="font-display text-xl font-bold text-amber-900/80">
@@ -302,6 +392,7 @@ const FlipbookViewer = ({
                       </div>
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
                   {/* Book spine shadow */}
                   <div className="absolute right-0 inset-y-0 w-8 bg-gradient-to-l from-black/30 to-transparent" />
                 </motion.div>
@@ -331,9 +422,7 @@ const FlipbookViewer = ({
                         className="w-full h-full object-cover object-top"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                        <FileText className="w-24 h-24 text-gray-300" />
-                      </div>
+                      generateDummyPageContent(currentPage, currentArticle?.judul || 'Artikel', mediaName)
                     )}
                     
                     {/* Page fold effect */}
