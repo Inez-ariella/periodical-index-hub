@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, BookOpen, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, ExternalLink, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Article, sampleArticles } from '@/lib/data';
+import FlipbookViewer from './FlipbookViewer';
 
 interface NewspaperShelfProps {
   onArticleClick: (article: Article) => void;
@@ -29,6 +30,9 @@ const ITEMS_PER_SHELF_MOBILE = 2;
 const NewspaperShelf = ({ onArticleClick }: NewspaperShelfProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [expandedMedia, setExpandedMedia] = useState<string | null>(null);
+  const [flipbookOpen, setFlipbookOpen] = useState(false);
+  const [selectedMediaForFlipbook, setSelectedMediaForFlipbook] = useState<string | null>(null);
+  const [initialArticleId, setInitialArticleId] = useState<string | undefined>(undefined);
 
   const mediaGroups = useMemo(() => groupByMedia(sampleArticles), []);
   
@@ -49,6 +53,22 @@ const NewspaperShelf = ({ onArticleClick }: NewspaperShelfProps) => {
 
   const handleMediaClick = (media: string) => {
     setExpandedMedia(expandedMedia === media ? null : media);
+  };
+
+  const handleOpenFlipbook = (mediaName: string, articleId?: string) => {
+    setSelectedMediaForFlipbook(mediaName);
+    setInitialArticleId(articleId);
+    setFlipbookOpen(true);
+  };
+
+  const handleCloseFlipbook = () => {
+    setFlipbookOpen(false);
+    setSelectedMediaForFlipbook(null);
+    setInitialArticleId(undefined);
+  };
+
+  const getArticlesForMedia = (mediaName: string) => {
+    return mediaGroups.find(g => g.media === mediaName)?.articles || [];
   };
 
   return (
@@ -201,13 +221,24 @@ const NewspaperShelf = ({ onArticleClick }: NewspaperShelfProps) => {
                   <h3 className="font-display text-xl font-bold text-foreground">
                     Artikel dari {expandedMedia}
                   </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setExpandedMedia(null)}
-                  >
-                    Tutup
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleOpenFlipbook(expandedMedia)}
+                      className="bg-accent hover:bg-accent/90"
+                    >
+                      <Newspaper className="w-4 h-4 mr-2" />
+                      Buka Flipbook
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setExpandedMedia(null)}
+                    >
+                      Tutup
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -220,7 +251,7 @@ const NewspaperShelf = ({ onArticleClick }: NewspaperShelfProps) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         className="group bg-secondary/50 rounded-lg p-4 cursor-pointer hover:bg-secondary transition-colors"
-                        onClick={() => onArticleClick(article)}
+                        onClick={() => handleOpenFlipbook(expandedMedia, article.id)}
                       >
                         <div className="flex gap-3">
                           {article.fotoUrl && (
@@ -245,8 +276,8 @@ const NewspaperShelf = ({ onArticleClick }: NewspaperShelfProps) => {
                         
                         <div className="flex items-center justify-end mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <span className="text-xs text-accent flex items-center gap-1">
-                            <ExternalLink className="w-3 h-3" />
-                            Buka Detail
+                            <BookOpen className="w-3 h-3" />
+                            Buka di Flipbook
                           </span>
                         </div>
                       </motion.div>
@@ -256,6 +287,17 @@ const NewspaperShelf = ({ onArticleClick }: NewspaperShelfProps) => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Flipbook Viewer */}
+        {selectedMediaForFlipbook && (
+          <FlipbookViewer
+            articles={getArticlesForMedia(selectedMediaForFlipbook)}
+            mediaName={selectedMediaForFlipbook}
+            isOpen={flipbookOpen}
+            onClose={handleCloseFlipbook}
+            initialArticleId={initialArticleId}
+          />
+        )}
       </div>
     </section>
   );
